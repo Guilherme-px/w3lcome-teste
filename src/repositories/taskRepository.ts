@@ -17,7 +17,9 @@ function findTasks() {
     return tasks;
 }
 
-function findTaskById(id: number) {}
+function findTaskById(id: number): ITask | undefined {
+    return tasks.find((task) => task.id === id);
+}
 
 function updateTask(id: number, updatedTask: ITask) {}
 
