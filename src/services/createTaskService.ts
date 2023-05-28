@@ -3,7 +3,7 @@ import { ITask } from '../types/interfaces/ITasks';
 
 const createTaskService = async (taskData: ITask) => {
     if (!taskData.titulo) {
-        throw new AppError('Titulo obrigatório!');
+        throw new AppError('Titulo obrigatório!', 400);
     }
 };
 
