@@ -13,10 +13,14 @@ function saveTask(task: Omit<ITask, 'id'>) {
     return newTask;
 }
 
+function findTasks() {
+    return tasks;
+}
+
 function findTaskById(id: number) {}
 
 function updateTask(id: number, updatedTask: ITask) {}
 
 function deleteTask(id: number) {}
 
-export { saveTask, findTaskById, updateTask, deleteTask };
+export { saveTask, findTasks, findTaskById, updateTask, deleteTask };
