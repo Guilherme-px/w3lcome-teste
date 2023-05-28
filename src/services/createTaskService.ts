@@ -1,15 +1,15 @@
 import { AppError } from '../errors/AppError';
 import { saveTask } from '../repositories/taskRepository';
-import { ITask } from '../types/interfaces/ITasks';
+import { ITaskOptionalId } from '../types/types/taskTypes';
 
-const createTaskService = async (taskData: ITask) => {
+const createTaskService = async (taskData: ITaskOptionalId) => {
     if (!taskData.titulo) {
         throw new AppError('Titulo obrigatório!', 400);
     }
 
-    const task = await saveTask({ ...taskData })
+    const task = await saveTask({ ...taskData });
 
-    return task
+    return task;
 };
 
 export { createTaskService };

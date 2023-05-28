@@ -3,7 +3,7 @@ import { createTaskService } from '../../../services/createTaskService';
 
 describe('unit tests createTaskService', () => {
     test('should return an error message if the title is empty', async () => {
-        const taskData = { id: 1, titulo: '', concluida: true };
+        const taskData = { titulo: '', concluida: true };
 
         await expect(createTaskService(taskData)).rejects.toThrow(
             'Titulo obrigatório!'
@@ -11,7 +11,7 @@ describe('unit tests createTaskService', () => {
     });
 
     test('should return an error message with status code 400 if the title is empty', async () => {
-        const taskData = { id: 1, titulo: '', concluida: true };
+        const taskData = { titulo: '', concluida: true };
 
         try {
             await createTaskService(taskData);
