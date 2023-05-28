@@ -4,7 +4,7 @@ import * as createTaskService from '../../../services/createTaskService';
 import { AppError } from '../../../errors/AppError';
 
 describe('integration tests createTaskController', () => {
-    it('should return status code 200 and success message when task is created successfully', async () => {
+    it('should return status code 201 and success message when task is created successfully', async () => {
         const requestData = {
             titulo: 'tarefa',
             concluida: true,
@@ -22,7 +22,7 @@ describe('integration tests createTaskController', () => {
 
         const response = await request(app).post('/tarefas').send(requestData);
 
-        expect(response.status).toBe(200);
+        expect(response.status).toBe(201);
         expect(response.body.msg).toBe('Tarefa criada com sucesso!');
         expect(createTaskServiceMock).toHaveBeenCalledWith(requestData);
     });

@@ -1,18 +1,16 @@
 import { NextFunction, Request, Response } from 'express';
-import { createTaskService } from '../services/createTaskService';
 import { AppError } from '../errors/AppError';
+import { getTasksService } from '../services/getTasksService';
 
-const createTaskController = async (
+const getTasksController = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
-    const taskData = { ...req.body };
-
     try {
-        await createTaskService(taskData);
+        const tasks = await getTasksService();
 
-        return res.status(201).json({ msg: 'Tarefa criada com sucesso!' });
+        return res.status(200).json(tasks);
     } catch (error) {
         if (error instanceof AppError) {
             res.status(error.statusCode).json({ msg: error.message });
@@ -22,4 +20,4 @@ const createTaskController = async (
     }
 };
 
-export { createTaskController };
+export { getTasksController };

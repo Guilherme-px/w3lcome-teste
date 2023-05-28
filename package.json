@@ -14,7 +14,7 @@
         ]
     },
     "scripts": {
-        "dev": "ts-node --watch src/server.ts",
+        "dev": "ts-node src/server.ts",
         "lint": "eslint src/**/*.js --max-warnings=0 --fix",
         "lint:fix": "eslint . --ext .ts --fix",
         "test": "jest --watch"
