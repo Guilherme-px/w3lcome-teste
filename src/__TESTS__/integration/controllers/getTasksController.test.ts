@@ -22,15 +22,15 @@ describe('integration tests getTasksController', () => {
     });
 
     it('should handle errors and return the error message', async () => {
-        const errorMessage = 'Failed to retrieve tasks';
+        const errorMessage = 'tarefa não encontrada!';
 
         jest.spyOn(getTasksService, 'getTasksService').mockRejectedValue(
-            new AppError(errorMessage, 500)
+            new AppError(errorMessage, 404)
         );
 
         const response = await request(app).get('/tarefas');
 
-        expect(response.status).toBe(500);
+        expect(response.status).toBe(404);
         expect(response.body).toEqual({ msg: errorMessage });
         expect(getTasksService.getTasksService).toHaveBeenCalled();
     });

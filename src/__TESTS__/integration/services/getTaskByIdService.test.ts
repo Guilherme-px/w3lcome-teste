@@ -28,12 +28,12 @@ describe('Integration test getTaskByIdService', () => {
         expect(findTaskById).toHaveBeenCalledWith(taskId);
     });
 
-    it('should throw an AppError with status code 500 when an error occurs during task retrieval', async () => {
+    it('should throw an AppError with status code 404 when an error occurs during task retrieval', async () => {
         const taskId = 1;
-        const mockErrorMessage = 'Failed to retrieve task';
+        const mockErrorMessage = 'tarefa não encontrada!';
 
         (findTaskById as jest.Mock).mockRejectedValue(
-            new Error(mockErrorMessage)
+            new AppError(mockErrorMessage, 404)
         );
 
         await expect(getTaskByIdService(taskId)).rejects.toThrow(AppError);

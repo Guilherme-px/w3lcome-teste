@@ -17,8 +17,9 @@ function findTasks() {
     return tasks;
 }
 
-function findTaskById(id: number): ITask | undefined {
-    return tasks.find((task) => task.id === id);
+async function findTaskById(id: number): Promise<ITask | null> {
+    const task = await tasks.find((task) => task.id === id);
+    return task !== undefined ? task : null;
 }
 
 function updateTask(id: number, updatedTask: ITask) {}
