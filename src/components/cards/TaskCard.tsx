@@ -7,11 +7,16 @@ type CardList = {
     id: number;
     task: string;
     onEditClick: (taskId: number) => void;
+    onDeleteClick: (taskId: number) => void;
 };
 
-const CardComponent = ({ id, task, onEditClick }: CardList) => {
+const CardComponent = ({ id, task, onEditClick, onDeleteClick }: CardList) => {
     const handleEditButtonClick = () => {
         onEditClick(id);
+    };
+
+    const handleDeleteButtonClick = () => {
+        onDeleteClick(id);
     };
 
     return (
@@ -27,7 +32,7 @@ const CardComponent = ({ id, task, onEditClick }: CardList) => {
                     <Button onClick={handleEditButtonClick}>
                         <EditIcon className="mr-6 cursor-pointer text-[#f2b10c]" />
                     </Button>
-                    <Button>
+                    <Button onClick={handleDeleteButtonClick}>
                         <DeleteIcon className="mr-5 cursor-pointer text-red-600" />
                     </Button>
                 </div>

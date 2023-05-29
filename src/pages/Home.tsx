@@ -8,11 +8,13 @@ import api from '../services/axiosConfig';
 import MessageAlert from '../components/alerts/MessageAlert';
 import CardComponent from '../components/cards/TaskCard';
 import { ITask } from '../interfaces/ITask';
-import { Pagination } from '@mui/material/';
+import { Pagination, Button } from '@mui/material/';
+import DeleteDialog from '../components/modal/DeleteDialog';
 
 const Home = () => {
     const [loading, setLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [deleteModal, setDeleteModal] = useState(false);
     const [error, setError] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [isEditing, setIsEditing] = useState(false);
@@ -34,6 +36,11 @@ const Home = () => {
 
     const handleOpenModal = () => {
         setShowModal(true);
+    };
+
+    const handlDeleteClick = async (taskId: number) => {
+        await setId(taskId);
+        setDeleteModal(true);
     };
 
     const handleEditClick = async (taskId: number) => {
@@ -128,6 +135,25 @@ const Home = () => {
             });
     };
 
+    const handleDelete = async () => {
+        console.log(id);
+        await api
+            .delete(`/tarefas/${id}`)
+            .then((res) => {
+                setMessage(res.data.msg);
+                setMessageType('success');
+                getTasks();
+                setLoading(false);
+                setDeleteModal(false);
+            })
+            .catch((res) => {
+                setLoading(false);
+                setMessage(res.data);
+                setMessageType('error');
+                setDeleteModal(false);
+            });
+    };
+
     const indexOfLastTask = currentPage * tasksPerPage;
     const indexOfFirstTask = indexOfLastTask - tasksPerPage;
     const currentTasks = tasks.slice(indexOfFirstTask, indexOfLastTask);
@@ -177,6 +203,46 @@ const Home = () => {
                             </div>
                         </div>
                     </DialogModal>
+
+                    <DeleteDialog
+                        isOpen={deleteModal}
+                        onClose={() => {
+                            setDeleteModal(false);
+                        }}
+                    >
+                        <div className="px-10 py-3">
+                            <div className="pb-5 font-bold text-lg">
+                                <h1 className="text-[#f2b10c]">
+                                    Deletar tarefa
+                                </h1>
+                            </div>
+                            <div>
+                                <span>
+                                    Tem certeza que deseja deletar esta tarefa ?
+                                </span>
+                            </div>
+                            <div className="flex justify-end mt-8">
+                                <div className="mx-5">
+                                    <Button
+                                        variant="contained"
+                                        style={{ background: 'grey' }}
+                                        onClick={() => setDeleteModal(false)}
+                                    >
+                                        Cancelar
+                                    </Button>
+                                </div>
+                                <div>
+                                    <Button
+                                        variant="contained"
+                                        style={{ background: 'red' }}
+                                        onClick={handleDelete}
+                                    >
+                                        Deletar
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </DeleteDialog>
                     <div>
                         {currentTasks.map((task: ITask) => (
                             <CardComponent
@@ -184,15 +250,22 @@ const Home = () => {
                                 id={task.id}
                                 task={task.titulo}
                                 onEditClick={() => handleEditClick(task.id)}
+                                onDeleteClick={() => handlDeleteClick(task.id)}
                             />
                         ))}
                     </div>
-                    <Pagination
-                        className="flex justify-center my-8"
-                        count={Math.ceil(tasks.length / tasksPerPage)}
-                        page={currentPage}
-                        onChange={(_event, pageNumber) => paginate(pageNumber)}
-                    />
+                    {tasks.length > 0 ? (
+                        <Pagination
+                            className="flex justify-center my-8"
+                            count={Math.ceil(tasks.length / tasksPerPage)}
+                            page={currentPage}
+                            onChange={(_event, pageNumber) =>
+                                paginate(pageNumber)
+                            }
+                        />
+                    ) : (
+                        <></>
+                    )}
                 </div>
             )}
         </div>
