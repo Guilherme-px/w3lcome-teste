@@ -15,6 +15,7 @@ const Home = () => {
     const [loading, setLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
+    const [isUpdateStatus, setIsUpdateStatus] = useState(false);
     const [error, setError] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [isEditing, setIsEditing] = useState(false);
@@ -36,23 +37,24 @@ const Home = () => {
     }, [id]);
 
     useEffect(() => {
-        if (task) {
+        if (isUpdateStatus) {
             handleSubmit(task.titulo);
         }
-    }, [task]);
+    }, [isUpdateStatus]);
 
     const handleOpenModal = () => {
         setShowModal(true);
     };
 
     const handlDeleteClick = async (taskId: number) => {
-        await setId(taskId);
+        setId(taskId);
         setDeleteModal(true);
     };
 
     const handleEditClick = async (taskId: number) => {
         setIsEditing(true);
-        await setId(taskId);
+        setUpdateId(taskId);
+        setId(taskId);
         handleOpenModal();
         getTask();
         if (task) {
@@ -97,6 +99,7 @@ const Home = () => {
                     setMessage(res.data.msg);
                     setMessageType('success');
                     setInputValue('');
+                    setIsUpdateStatus(false);
                     getTasks();
                     setLoading(false);
                     setShowModal(false);
@@ -148,6 +151,7 @@ const Home = () => {
         title: string
     ) => {
         setUpdateId(taskId);
+        setIsUpdateStatus(true);
         setTask({ id: taskId, titulo: title, concluida: checked });
         setIsEditing(true);
     };
