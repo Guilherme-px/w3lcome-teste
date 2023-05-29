@@ -6,11 +6,20 @@ import DeleteIcon from '@mui/icons-material/Delete';
 type CardList = {
     id: number;
     task: string;
+    concluida?: boolean;
     onEditClick: (taskId: number) => void;
     onDeleteClick: (taskId: number) => void;
+    onCheckboxChange: (checked: boolean) => void;
 };
 
-const CardComponent = ({ id, task, onEditClick, onDeleteClick }: CardList) => {
+const CardComponent = ({
+    id,
+    task,
+    concluida,
+    onEditClick,
+    onDeleteClick,
+    onCheckboxChange,
+}: CardList) => {
     const handleEditButtonClick = () => {
         onEditClick(id);
     };
@@ -19,11 +28,26 @@ const CardComponent = ({ id, task, onEditClick, onDeleteClick }: CardList) => {
         onDeleteClick(id);
     };
 
+    const handleCheckboxChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        onCheckboxChange(event.target.checked);
+    };
+
     return (
-        <Card className="flex items-center justify-between flex-row m-5 h-14">
+        <Card
+            className="flex items-center justify-between flex-row m-5 h-14"
+            style={
+                concluida ? { background: '#32a852' } : { background: 'white' }
+            }
+        >
             <Box className="flex">
                 <div className="ml-2">
-                    <Checkbox size="small" />
+                    <Checkbox
+                        size="small"
+                        checked={concluida}
+                        onChange={handleCheckboxChange}
+                    />
                     {task}
                 </div>
             </Box>

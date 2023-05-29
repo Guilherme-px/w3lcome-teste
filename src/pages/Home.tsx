@@ -25,6 +25,7 @@ const Home = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(5);
     const [id, setId] = useState<number | null>(null);
+    const [updateId, setUpdateId] = useState<number | null>(null);
 
     useEffect(() => {
         setLoading(false);
@@ -33,6 +34,12 @@ const Home = () => {
             getTask();
         }
     }, [id]);
+
+    useEffect(() => {
+        if (task) {
+            handleSubmit(task.titulo);
+        }
+    }, [task]);
 
     const handleOpenModal = () => {
         setShowModal(true);
@@ -55,8 +62,10 @@ const Home = () => {
 
     const handleSubmit = async (value: string) => {
         setLoading(true);
+
         if (!value) {
             setError(true);
+            setLoading(false);
             return;
         }
 
@@ -80,8 +89,8 @@ const Home = () => {
                 });
         } else {
             await api
-                .put(`/tarefas/${id}`, {
-                    titulo: value ? value : task?.titulo,
+                .put(`/tarefas/${updateId}`, {
+                    titulo: value || task?.titulo,
                     concluida: task?.concluida,
                 })
                 .then((res) => {
@@ -106,7 +115,6 @@ const Home = () => {
         await api
             .get('/tarefas')
             .then((res) => {
-                console.log(res.data);
                 setTasks(res.data);
                 setLoading(false);
             })
@@ -126,7 +134,6 @@ const Home = () => {
                 setInputValue(res.data.titulo);
                 setTask(res.data);
                 setLoading(false);
-                console.log(res.data);
             })
             .catch((res) => {
                 setLoading(false);
@@ -135,8 +142,17 @@ const Home = () => {
             });
     };
 
+    const handleCheckboxChange = async (
+        taskId: number,
+        checked: boolean,
+        title: string
+    ) => {
+        setUpdateId(taskId);
+        setTask({ id: taskId, titulo: title, concluida: checked });
+        setIsEditing(true);
+    };
+
     const handleDelete = async () => {
-        console.log(id);
         await api
             .delete(`/tarefas/${id}`)
             .then((res) => {
@@ -249,8 +265,16 @@ const Home = () => {
                                 key={task.id}
                                 id={task.id}
                                 task={task.titulo}
+                                concluida={task.concluida}
                                 onEditClick={() => handleEditClick(task.id)}
                                 onDeleteClick={() => handlDeleteClick(task.id)}
+                                onCheckboxChange={(checked) =>
+                                    handleCheckboxChange(
+                                        task.id,
+                                        checked,
+                                        task.titulo
+                                    )
+                                }
                             />
                         ))}
                     </div>
