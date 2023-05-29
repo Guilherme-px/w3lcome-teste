@@ -20,22 +20,28 @@ const MessageAlert = ({ alertType, message }: SnackbarProps) => {
     };
 
     return (
-        <Snackbar
-            open={open}
-            autoHideDuration={5000}
-            anchorOrigin={snackbarOrigin}
-            onClose={handleClose}
-        >
-            {alertType === 'error' ? (
-                <Alert severity="error" onClose={handleClose}>
-                    {message}
-                </Alert>
+        <>
+            {message ? (
+                <Snackbar
+                    open={open}
+                    autoHideDuration={5000}
+                    anchorOrigin={snackbarOrigin}
+                    onClose={handleClose}
+                >
+                    {alertType === 'error' ? (
+                        <Alert severity="error" onClose={handleClose}>
+                            {message}
+                        </Alert>
+                    ) : (
+                        <Alert severity="success" onClose={handleClose}>
+                            {message}
+                        </Alert>
+                    )}
+                </Snackbar>
             ) : (
-                <Alert severity="success" onClose={handleClose}>
-                    {message}
-                </Alert>
+                ''
             )}
-        </Snackbar>
+        </>
     );
 };
 

@@ -6,6 +6,9 @@ import MyCustomButttom from '../components/buttom/CustomButtom';
 import AddIcon from '@mui/icons-material/Add';
 import api from '../services/axiosConfig';
 import MessageAlert from '../components/alerts/MessageAlert';
+import CardComponent from '../components/cards/TaskCard';
+import { ITask } from '../interfaces/ITask';
+import { Pagination } from '@mui/material/';
 
 const Home = () => {
     const [loading, setLoading] = useState(false);
@@ -14,9 +17,13 @@ const Home = () => {
     const [inputValue, setInputValue] = useState('');
     const [message, setMessage] = useState('');
     const [messageType, setMessageType] = useState('');
+    const [tasks, setTasks] = useState<ITask[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [tasksPerPage] = useState(5);
 
     useEffect(() => {
         setLoading(false);
+        getTasks();
     }, []);
 
     const handleOpenModal = () => {
@@ -47,6 +54,28 @@ const Home = () => {
                 setMessageType('error');
             });
     };
+
+    const getTasks = async () => {
+        setLoading(true);
+
+        await api
+            .get('/tarefas')
+            .then((res) => {
+                setTasks(res.data);
+                setLoading(false);
+            })
+            .catch((res) => {
+                setLoading(false);
+                setMessage(res.data.msg);
+                setMessageType('error');
+            });
+    };
+
+    const indexOfLastTask = currentPage * tasksPerPage;
+    const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+    const currentTasks = tasks.slice(indexOfFirstTask, indexOfLastTask);
+
+    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
     return (
         <div>
@@ -80,7 +109,17 @@ const Home = () => {
                             </div>
                         </div>
                     </DialogModal>
-                    <div></div>
+                    <div>
+                        {currentTasks.map((task: ITask) => (
+                            <CardComponent key={task.id} task={task.titulo} />
+                        ))}
+                    </div>
+                    <Pagination
+                        className="flex justify-center my-8"
+                        count={Math.ceil(tasks.length / tasksPerPage)}
+                        page={currentPage}
+                        onChange={(_event, pageNumber) => paginate(pageNumber)}
+                    />
                 </div>
             )}
         </div>
