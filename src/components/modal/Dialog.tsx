@@ -4,6 +4,7 @@ import { Dialog, DialogContent } from '@mui/material';
 type ModalProps = {
     isOpen: boolean;
     onClose: () => void;
+    setTask?: () => void;
     children: React.ReactNode;
 };
 

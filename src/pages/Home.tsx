@@ -15,19 +15,35 @@ const Home = () => {
     const [showModal, setShowModal] = useState(false);
     const [error, setError] = useState(false);
     const [inputValue, setInputValue] = useState('');
+    const [isEditing, setIsEditing] = useState(false);
     const [message, setMessage] = useState('');
     const [messageType, setMessageType] = useState('');
     const [tasks, setTasks] = useState<ITask[]>([]);
+    const [task, setTask] = useState<ITask | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [tasksPerPage] = useState(5);
+    const [id, setId] = useState<number | null>(null);
 
     useEffect(() => {
         setLoading(false);
         getTasks();
-    }, []);
+        if (id !== null) {
+            getTask();
+        }
+    }, [id]);
 
     const handleOpenModal = () => {
         setShowModal(true);
+    };
+
+    const handleEditClick = async (taskId: number) => {
+        setIsEditing(true);
+        await setId(taskId);
+        handleOpenModal();
+        getTask();
+        if (task) {
+            setInputValue(task.titulo || '');
+        }
     };
 
     const handleSubmit = async (value: string) => {
@@ -39,20 +55,42 @@ const Home = () => {
 
         setError(false);
 
-        await api
-            .post('/tarefas', { titulo: value })
-            .then((res) => {
-                setMessage(res.data.msg);
-                setMessageType('success');
-                setInputValue('');
-                setLoading(false);
-                setShowModal(false);
-            })
-            .catch((res) => {
-                setLoading(false);
-                setMessage(res.data.msg);
-                setMessageType('error');
-            });
+        if (!isEditing) {
+            await api
+                .post('/tarefas', { titulo: value })
+                .then((res) => {
+                    setMessage(res.data.msg);
+                    setMessageType('success');
+                    setInputValue('');
+                    getTasks();
+                    setLoading(false);
+                    setShowModal(false);
+                })
+                .catch((res) => {
+                    setLoading(false);
+                    setMessage(res.data.msg);
+                    setMessageType('error');
+                });
+        } else {
+            await api
+                .put(`/tarefas/${id}`, {
+                    titulo: value ? value : task?.titulo,
+                    concluida: task?.concluida,
+                })
+                .then((res) => {
+                    setMessage(res.data.msg);
+                    setMessageType('success');
+                    setInputValue('');
+                    getTasks();
+                    setLoading(false);
+                    setShowModal(false);
+                })
+                .catch((res) => {
+                    setLoading(false);
+                    setMessage(res.data);
+                    setMessageType('error');
+                });
+        }
     };
 
     const getTasks = async () => {
@@ -61,8 +99,27 @@ const Home = () => {
         await api
             .get('/tarefas')
             .then((res) => {
+                console.log(res.data);
                 setTasks(res.data);
                 setLoading(false);
+            })
+            .catch((res) => {
+                setLoading(false);
+                setMessage(res.data.msg);
+                setMessageType('error');
+            });
+    };
+
+    const getTask = async () => {
+        setLoading(true);
+
+        await api
+            .get(`/tarefas/${id}`)
+            .then((res) => {
+                setInputValue(res.data.titulo);
+                setTask(res.data);
+                setLoading(false);
+                console.log(res.data);
             })
             .catch((res) => {
                 setLoading(false);
@@ -93,25 +150,41 @@ const Home = () => {
                     <MessageAlert alertType={messageType} message={message} />
                     <DialogModal
                         isOpen={showModal}
-                        onClose={() => setShowModal(false)}
+                        onClose={() => {
+                            setShowModal(false);
+                            setTask(null);
+                            setIsEditing(false);
+                            setInputValue('');
+                        }}
                     >
                         <div className="px-10 py-3">
                             <div className="pb-5 font-bold text-lg">
-                                <h1 className="text-[#f2b10c]">Criar tarefa</h1>
+                                <h1 className="text-[#f2b10c]">
+                                    {!isEditing
+                                        ? 'Criar tarefa'
+                                        : 'Editar tarefa'}
+                                </h1>
                             </div>
                             <div>
                                 <TaskForm
+                                    isEditing={isEditing}
                                     error={error}
                                     inputValue={inputValue}
                                     onInputChange={setInputValue}
                                     onSubmit={handleSubmit}
+                                    task={task}
                                 />
                             </div>
                         </div>
                     </DialogModal>
                     <div>
                         {currentTasks.map((task: ITask) => (
-                            <CardComponent key={task.id} task={task.titulo} />
+                            <CardComponent
+                                key={task.id}
+                                id={task.id}
+                                task={task.titulo}
+                                onEditClick={() => handleEditClick(task.id)}
+                            />
                         ))}
                     </div>
                     <Pagination
