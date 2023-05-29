@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box';
-import { Card, Checkbox, Button } from '@mui/material/';
+import { Card, Checkbox, IconButton } from '@mui/material/';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -53,12 +53,22 @@ const CardComponent = ({
             </Box>
             <Box>
                 <div className="flex">
-                    <Button onClick={handleEditButtonClick}>
-                        <EditIcon className="mr-6 cursor-pointer text-[#f2b10c]" />
-                    </Button>
-                    <Button onClick={handleDeleteButtonClick}>
-                        <DeleteIcon className="mr-5 cursor-pointer text-red-600" />
-                    </Button>
+                    <IconButton onClick={handleEditButtonClick} size="small">
+                        <EditIcon
+                            className="cursor-pointer text-[#f2b10c]"
+                            fontSize="small"
+                        />
+                    </IconButton>
+                    <IconButton
+                        onClick={handleDeleteButtonClick}
+                        size="small"
+                        style={{ marginInline: '20px' }}
+                    >
+                        <DeleteIcon
+                            className="cursor-pointer text-red-600"
+                            fontSize="small"
+                        />
+                    </IconButton>
                 </div>
             </Box>
         </Card>
