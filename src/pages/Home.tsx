@@ -5,12 +5,15 @@ import TaskForm from '../components/form/TaskForm';
 import MyCustomButttom from '../components/buttom/CustomButtom';
 import AddIcon from '@mui/icons-material/Add';
 import api from '../services/axiosConfig';
+import MessageAlert from '../components/alerts/MessageAlert';
 
 const Home = () => {
     const [loading, setLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [error, setError] = useState(false);
     const [inputValue, setInputValue] = useState('');
+    const [message, setMessage] = useState('');
+    const [messageType, setMessageType] = useState('');
 
     useEffect(() => {
         setLoading(false);
@@ -21,6 +24,7 @@ const Home = () => {
     };
 
     const handleSubmit = async (value: string) => {
+        setLoading(true);
         if (!value) {
             setError(true);
             return;
@@ -31,11 +35,16 @@ const Home = () => {
         await api
             .post('/tarefas', { titulo: value })
             .then((res) => {
-                console.log(res.data);
+                setMessage(res.data.msg);
+                setMessageType('success');
                 setInputValue('');
+                setLoading(false);
+                setShowModal(false);
             })
             .catch((res) => {
-                console.log(res.data);
+                setLoading(false);
+                setMessage(res.data.msg);
+                setMessageType('error');
             });
     };
 
@@ -52,6 +61,7 @@ const Home = () => {
                             startIcon={<AddIcon />}
                         />
                     </div>
+                    <MessageAlert alertType={messageType} message={message} />
                     <DialogModal
                         isOpen={showModal}
                         onClose={() => setShowModal(false)}
