@@ -1,4 +1,5 @@
 import { ITask } from '../types/interfaces/ITasks';
+import { ITaskOptionalId } from '../types/types/taskTypes';
 
 const tasks: Array<ITask> = [];
 
@@ -8,7 +9,7 @@ function generateId() {
 }
 
 function saveTask(task: Omit<ITask, 'id'>) {
-    const newTask = { id: generateId(), ...task };
+    const newTask = { id: generateId(), titulo: task.titulo, concluida: false };
     tasks.push(newTask);
     return newTask;
 }
@@ -22,8 +23,22 @@ async function findTaskById(id: number): Promise<ITask | null> {
     return task !== undefined ? task : null;
 }
 
-function updateTask(id: number, updatedTask: ITask) {}
+function updateTask(id: number, updatedTask: ITaskOptionalId): ITask | null {
+    const taskIndex = tasks.findIndex((task) => task.id === id);
+    if (taskIndex !== -1) {
+        tasks[taskIndex] = { ...tasks[taskIndex], ...updatedTask };
+        return tasks[taskIndex];
+    }
+    return null;
+}
 
-function deleteTask(id: number) {}
+function deleteTask(id: number): ITask | null {
+    const taskIndex = tasks.findIndex((task) => task.id === id);
+    if (taskIndex !== -1) {
+        const deletedTask = tasks.splice(taskIndex, 1)[0];
+        return deletedTask;
+    }
+    return null;
+}
 
 export { saveTask, findTasks, findTaskById, updateTask, deleteTask };
