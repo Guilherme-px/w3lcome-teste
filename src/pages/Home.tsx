@@ -37,10 +37,18 @@ const Home = () => {
     }, [id]);
 
     useEffect(() => {
-        if (isUpdateStatus) {
+        setLoading(false);
+        getTasks();
+        if (id !== null) {
+            getTask();
+        }
+    }, [id]);
+
+    useEffect(() => {
+        if (isUpdateStatus && task) {
             handleSubmit(task.titulo);
         }
-    }, [isUpdateStatus]);
+    }, [isUpdateStatus, task]);
 
     const handleOpenModal = () => {
         setShowModal(true);
@@ -56,7 +64,6 @@ const Home = () => {
         setUpdateId(taskId);
         setId(taskId);
         handleOpenModal();
-        getTask();
         if (task) {
             setInputValue(task.titulo || '');
         }
@@ -103,6 +110,7 @@ const Home = () => {
                     getTasks();
                     setLoading(false);
                     setShowModal(false);
+                    setIsEditing(false);
                 })
                 .catch((res) => {
                     setLoading(false);
@@ -114,7 +122,6 @@ const Home = () => {
 
     const getTasks = async () => {
         setLoading(true);
-
         await api
             .get('/tarefas')
             .then((res) => {
@@ -130,7 +137,6 @@ const Home = () => {
 
     const getTask = async () => {
         setLoading(true);
-
         await api
             .get(`/tarefas/${id}`)
             .then((res) => {
@@ -193,7 +199,11 @@ const Home = () => {
                             startIcon={<AddIcon />}
                         />
                     </div>
-                    <MessageAlert alertType={messageType} message={message} />
+                    <MessageAlert
+                        alertType={messageType}
+                        message={message}
+                        onClose={() => setMessage('')}
+                    />
                     <DialogModal
                         isOpen={showModal}
                         onClose={() => {

@@ -5,13 +5,15 @@ import { Alert } from '@mui/material';
 type SnackbarProps = {
     alertType: string;
     message: string;
+    onClose: () => void;
 };
 
-const MessageAlert = ({ alertType, message }: SnackbarProps) => {
+const MessageAlert = ({ alertType, message, onClose }: SnackbarProps) => {
     const [open, setOpen] = useState(true);
 
     const handleClose = () => {
         setOpen(false);
+        onClose();
     };
 
     const snackbarOrigin: SnackbarOrigin = {
