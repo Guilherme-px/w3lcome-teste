@@ -4,7 +4,7 @@ type LoaderProps = {
     active: boolean;
 };
 
-const load = ({ active }: LoaderProps) => {
+const Load = ({ active }: LoaderProps) => {
     return (
         <div className="flex items-center justify-center h-screen">
             {active && <CircularProgress style={{ color: '#f2b10c' }} />}
@@ -12,4 +12,4 @@ const load = ({ active }: LoaderProps) => {
     );
 };
 
-export default load;
+export default Load;
