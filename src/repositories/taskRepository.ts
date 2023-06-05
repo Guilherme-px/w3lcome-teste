@@ -9,7 +9,11 @@ function generateId() {
 }
 
 function saveTask(task: Omit<ITask, 'id'>) {
-    const newTask = { id: generateId(), titulo: task.titulo, concluida: false };
+    const newTask = {
+        id: generateId(),
+        titulo: task.titulo,
+        concluida: task.concluida ? task.concluida : false,
+    };
     tasks.push(newTask);
     return newTask;
 }
